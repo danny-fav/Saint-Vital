@@ -77,7 +77,7 @@ export default function Admin() {
                 >
                   <span className="text-muted-foreground">{metric}</span>
                   <span className="font-semibold">{value}</span>
-                  <span className="text-xs text-green-600">{change}</span>
+                  <span className="text-xs text-[color:var(--gold)]">{change}</span>
                 </div>
               ))}
             </div>

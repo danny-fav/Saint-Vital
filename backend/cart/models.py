@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from core.models import TimeStampedModel
@@ -18,7 +19,7 @@ class Cart(TimeStampedModel):
 
     @property
     def total(self):
-        return self.subtotal - self.discount
+        return self.subtotal - Decimal(str(self.discount))
 
     @property
     def item_count(self):

@@ -7,7 +7,7 @@ export default function OrderSuccessPage() {
     <PageShell>
       <section className="container-lux py-24 text-center">
         <div className="max-w-md mx-auto">
-          <CheckCircle className="h-16 w-16 mx-auto text-green-500" />
+          <CheckCircle className="h-16 w-16 mx-auto text-[color:var(--gold)]" />
           <h1 className="mt-8 font-display text-3xl md:text-4xl font-extrabold">
             Order Confirmed
           </h1>

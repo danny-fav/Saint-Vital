@@ -65,7 +65,7 @@ export default function WishlistPage() {
                   </button>
                   <button
                     onClick={() => removeItem(item.id)}
-                    className="p-2 border border-border hover:border-red-500 hover:text-red-500 rounded-lg"
+                    className="p-2 border border-border hover:border-destructive hover:text-destructive rounded-lg"
                     aria-label="Remove"
                   >
                     <Trash2 className="h-4 w-4" />

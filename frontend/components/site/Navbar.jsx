@@ -27,7 +27,7 @@ export function Navbar() {
   return (
     <header
       className={`sticky top-0 z-50 bg-background/95 backdrop-blur-md transition-shadow ${
-        scrolled ? "shadow-[0_1px_0_0_var(--border)]" : "border-b border-border"
+        scrolled ? "shadow-[0_1px_0_0_var(--color-border)]" : "border-b border-border"
       }`}
     >
       <div className="container-lux flex items-center gap-6 py-3.5">

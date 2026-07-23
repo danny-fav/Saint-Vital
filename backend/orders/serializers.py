@@ -38,7 +38,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             'id', 'order_number', 'status', 'subtotal', 'shipping_cost', 'tax',
             'discount', 'total', 'coupon_code', 'shipping_address', 'payment_method',
             'payment_id', 'tracking_number', 'carrier', 'customer_notes',
-            'items', 'paid_at', 'shipped_at', 'delivered_at', 'created_at', 'updated_at',
+            'items', 'notes', 'paid_at', 'shipped_at', 'delivered_at', 'created_at', 'updated_at',
         ]
 
     def get_notes(self, obj):
@@ -46,8 +46,8 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
 
 class CreateOrderSerializer(serializers.Serializer):
-    shipping_address = serializers.JSONField()
-    billing_address = serializers.JSONField(required=False)
+    shipping_address = serializers.IntegerField()
+    billing_address = serializers.IntegerField(required=False)
     payment_method = serializers.CharField(required=False)
     notes = serializers.CharField(required=False, allow_blank=True)
 

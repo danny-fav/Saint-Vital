@@ -1,3 +1,4 @@
+import json
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +10,7 @@ from .serializers import (
 )
 from cart.models import Cart
 from cart.serializers import CartSerializer
+from accounts.models import Address
 from core.permissions import IsAdminUser
 
 
@@ -32,6 +34,29 @@ class OrderListCreateView(generics.ListCreateAPIView):
         if cart.item_count == 0:
             return Response({'error': 'Cart is empty'}, status=status.HTTP_400_BAD_REQUEST)
 
+        shipping_data = serializer.validated_data['shipping_address']
+        if isinstance(shipping_data, int):
+            try:
+                addr = Address.objects.get(id=shipping_data)
+                shipping_data = {
+                    'label': addr.label,
+                    'first_name': addr.first_name,
+                    'last_name': addr.last_name,
+                    'phone': addr.phone,
+                    'line1': addr.line1,
+                    'line2': addr.line2,
+                    'city': addr.city,
+                    'state': addr.state,
+                    'postal_code': addr.postal_code,
+                    'country': addr.country,
+                }
+            except Address.DoesNotExist:
+                return Response({'error': 'Shipping address not found'}, status=status.HTTP_400_BAD_REQUEST)
+
+        billing_data = serializer.validated_data.get('billing_address', shipping_data)
+        if isinstance(billing_data, int):
+            billing_data = shipping_data
+
         order = Order.objects.create(
             user=request.user,
             subtotal=cart.subtotal,
@@ -40,8 +65,8 @@ class OrderListCreateView(generics.ListCreateAPIView):
             total=cart.total,
             coupon_code=cart.coupon_code,
             discount=cart.discount,
-            shipping_address=serializer.validated_data['shipping_address'],
-            billing_address=serializer.validated_data.get('billing_address', serializer.validated_data['shipping_address']),
+            shipping_address=shipping_data,
+            billing_address=billing_data,
             payment_method=serializer.validated_data.get('payment_method', ''),
             customer_notes=serializer.validated_data.get('notes', ''),
         )

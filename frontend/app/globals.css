@@ -1,27 +1,82 @@
 @import "tailwindcss";  
 @source "./";
 
-@theme inline {
-  /* Light mode tokens */
-  --color-background: oklch(0.99 0 0);
-  --color-foreground: oklch(0.13 0 0);
-  --color-card: oklch(0.97 0 0);
-  --color-card-foreground: oklch(0.13 0 0);
-  --color-surface: oklch(0.96 0 0);
-  --color-surface-foreground: oklch(0.13 0 0);
-  --color-popover: oklch(0.99 0 0);
-  --color-popover-foreground: oklch(0.13 0 0);
-  --color-muted: oklch(0.93 0 0);
-  --color-muted-foreground: oklch(0.56 0 0);
-  --color-accent: oklch(0.93 0 0);
-  --color-accent-foreground: oklch(0.13 0 0);
-  --color-border: oklch(0.89 0 0);
-  --color-input: oklch(0.89 0 0);
-  --color-ring: oklch(0.72 0 0);
+:root {
+  --color-background: #FCFCFA;
+  --color-foreground: #111111;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #111111;
+  --color-surface: #F5F4F0;
+  --color-surface-foreground: #111111;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #111111;
+  --color-muted: #EDECE8;
+  --color-muted-foreground: #787774;
+  --color-accent: #EDECE8;
+  --color-accent-foreground: #111111;
+  --color-primary: #C9A227;
+  --color-primary-foreground: #111111;
+  --color-secondary: #EDECE8;
+  --color-secondary-foreground: #111111;
+  --color-destructive: #DC2626;
+  --color-destructive-foreground: #FAFAFA;
+  --color-border: #E3E2DF;
+  --color-input: #E3E2DF;
+  --color-ring: #C9A227;
   --color-gold: #C9A227;
-  --color-ink: #FCFCFA;
-  --color-destructive: oklch(0.58 0.18 27);
-  --color-destructive-foreground: oklch(0.99 0 0);
+  --color-ink: #111111;
+}
+
+.dark {
+  --color-background: #0B0B0B;
+  --color-foreground: #EFEEEB;
+  --color-card: #161616;
+  --color-card-foreground: #EFEEEB;
+  --color-surface: #1A1A1A;
+  --color-surface-foreground: #EFEEEB;
+  --color-popover: #1C1C1C;
+  --color-popover-foreground: #EFEEEB;
+  --color-muted: #222222;
+  --color-muted-foreground: #9C9A96;
+  --color-accent: #222222;
+  --color-accent-foreground: #EFEEEB;
+  --color-primary: #C9A227;
+  --color-primary-foreground: #111111;
+  --color-secondary: #222222;
+  --color-secondary-foreground: #EFEEEB;
+  --color-destructive: #EF4444;
+  --color-destructive-foreground: #FAFAFA;
+  --color-border: #2A2A28;
+  --color-input: #2A2A28;
+  --color-ring: #C9A227;
+  --color-gold: #C9A227;
+  --color-ink: #111111;
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--color-card-foreground);
+  --color-surface: var(--color-surface);
+  --color-surface-foreground: var(--color-surface-foreground);
+  --color-popover: var(--color-popover);
+  --color-popover-foreground: var(--color-popover-foreground);
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
+  --color-border: var(--color-border);
+  --color-input: var(--color-input);
+  --color-ring: var(--color-ring);
+  --color-gold: var(--color-gold);
+  --color-ink: var(--color-ink);
 
   --font-display: "Plus Jakarta Sans", "Geist", sans-serif;
   --font-sans: "Inter", "Geist", sans-serif;
@@ -31,24 +86,6 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
-}
-
-.dark {
-  --color-background: oklch(0.11 0 0);
-  --color-foreground: oklch(0.93 0 0);
-  --color-card: oklch(0.14 0 0);
-  --color-card-foreground: oklch(0.93 0 0);
-  --color-surface: oklch(0.13 0 0);
-  --color-surface-foreground: oklch(0.93 0 0);
-  --color-popover: oklch(0.14 0 0);
-  --color-popover-foreground: oklch(0.93 0 0);
-  --color-muted: oklch(0.17 0 0);
-  --color-muted-foreground: oklch(0.62 0 0);
-  --color-accent: oklch(0.17 0 0);
-  --color-accent-foreground: oklch(0.93 0 0);
-  --color-border: oklch(0.2 0 0);
-  --color-input: oklch(0.2 0 0);
-  --color-ring: oklch(0.38 0 0);
 }
 
 @layer base {
@@ -67,7 +104,6 @@
   }
 }
 
-/* Layout */
 .container-lux {
   max-width: 1280px;
   margin-left: auto;
@@ -83,7 +119,6 @@
   }
 }
 
-/* Typography */
 .text-eyebrow {
   font-size: 0.625rem;
   letter-spacing: 0.24em;
@@ -96,7 +131,6 @@
   font-family: var(--font-display);
 }
 
-/* Buttons */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -187,7 +221,6 @@
   color: var(--color-ink);
 }
 
-/* Links */
 .link-lux {
   transition: color 0.2s;
 }
@@ -196,14 +229,12 @@
   color: var(--color-gold);
 }
 
-/* Cards */
 .card-lux {
   background-color: var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 }
 
-/* Badges */
 .badge-official {
   display: inline-flex;
   align-items: center;
@@ -231,7 +262,6 @@
   border-radius: var(--radius-sm);
 }
 
-/* Product Image */
 .product-image {
   overflow: hidden;
   border-radius: var(--radius-lg);
@@ -248,7 +278,6 @@
   transform: scale(1.03);
 }
 
-/* Animations */
 .animate-fade-up {
   animation: fade-up 0.6s ease-out both;
 }
