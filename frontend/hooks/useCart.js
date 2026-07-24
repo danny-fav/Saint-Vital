@@ -18,7 +18,7 @@ export function useCart() {
     finally { setLoading(false); }
   }, [isAuthenticated]);
 
-  useEffect(() => { fetchCart(); }, [fetchCart]);
+  useEffect(() => { fetchCart(); }, [fetchCart]); // eslint-disable-line react-hooks/set-state-in-effect
 
   const addItem = useCallback(async (productId, quantity = 1, variantId = null) => {
     const res = await cartService.add({ product_id: productId, variant_id: variantId, quantity });

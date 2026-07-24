@@ -1,19 +1,38 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Heart, Star, ShoppingBag } from "lucide-react";
 
 export function ProductCard({ product }) {
+  const isApi = typeof product.id === "number";
+
+  const image = isApi
+    ? product.primary_image?.image || "/placeholder.svg"
+    : product.image;
+  const linkHref = isApi ? `/product/${product.slug}` : `/product/${product.id}`;
+  const compareAt =
+    isApi && Number(product.compare_at_price) > 0
+      ? product.compare_at_price
+      : !isApi
+        ? product.compareAt
+        : null;
+  const isNew = isApi ? product.is_new : product.isNew;
+  const colors = isApi
+    ? product.available_colors?.map((c) => c.hex) || []
+    : product.colors || [];
+  const collection = isApi
+    ? product.category_name || "Saint Vital"
+    : product.collection || "Saint Vital";
+  const rating = isApi ? product.rating : product.rating;
+
   return (
     <div className="group relative">
-      <Link href={`/product/${product.id}`} className="block">
+      <Link href={linkHref} className="block">
         <div className="product-image relative aspect-[4/5] bg-[color:var(--surface)]">
-          <img src={product.image} alt={product.name} loading="lazy" />
+          <Image src={image} alt={product.name} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-            {product.official && (
-              <span className="badge-official">✓ Official</span>
-            )}
-            {product.isNew && <span className="badge-new">New</span>}
+            {isNew && <span className="badge-new">New</span>}
           </div>
           <button
             aria-label="Add to wishlist"
@@ -36,11 +55,11 @@ export function ProductCard({ product }) {
         <div className="pt-3 px-0.5">
           <div className="flex items-center justify-between gap-2">
             <p className="text-xs text-muted-foreground truncate">
-              {product.collection || "Saint Vital"}
+              {collection}
             </p>
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Star className="h-3 w-3 fill-[color:var(--gold)] text-[color:var(--gold)]" />
-              {product.rating}
+              {rating}
             </span>
           </div>
           <h3 className="mt-1 font-semibold text-[0.95rem] leading-snug line-clamp-1">
@@ -49,14 +68,14 @@ export function ProductCard({ product }) {
           <div className="mt-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="font-bold text-[0.95rem]">${product.price}</span>
-              {product.compareAt && (
+              {compareAt && (
                 <span className="text-xs text-muted-foreground line-through">
-                  ${product.compareAt}
+                  ${compareAt}
                 </span>
               )}
             </div>
             <div className="flex items-center gap-1">
-              {product.colors.slice(0, 4).map((c) => (
+              {colors.slice(0, 4).map((c) => (
                 <span
                   key={c}
                   className="h-3 w-3 rounded-full border border-border"

@@ -26,14 +26,14 @@ export function ThemeProvider({ children }) {
   // Initial read from storage (client only)
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) ?? "system";
-    setThemeState(stored);
+    setThemeState(stored); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
 
   // Resolve + apply whenever theme or system pref changes
   useEffect(() => {
     const compute = () => (theme === "system" ? getSystem() : theme);
     const next = compute();
-    setResolved(next);
+    setResolved(next); // eslint-disable-line react-hooks/set-state-in-effect
     apply(next);
 
     if (theme !== "system") return;

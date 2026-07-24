@@ -12,7 +12,7 @@ class ProductListView(generics.ListAPIView):
     serializer_class = ProductListSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['category__slug', 'is_new', 'featured', 'best_seller', 'collection__slug']
-    search_fields = ['name', 'description']
+    search_fields = ['name', 'description', 'sku', 'tags__name', 'category__name', 'collection__name']
     ordering_fields = ['price', 'created_at', 'rating', 'name']
     ordering = ['-created_at']
 

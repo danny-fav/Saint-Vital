@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function Logo({ compact = false, className = "" }) {
@@ -7,12 +8,15 @@ export function Logo({ compact = false, className = "" }) {
       href="/"
       className={`inline-flex items-center gap-2.5 leading-none ${className}`}
     >
-      <img
+      <Image
         src="/assets/logo.png"
         alt="Saint Vital"
+        width={size * 3}
+        height={size}
         style={{ height: size, width: "auto" }}
         className="block select-none"
         draggable={false}
+        priority
       />
 
       <span

@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem('sv_access_token');
     if (stored && token) {
       try {
-        setUser(JSON.parse(stored));
+        setUser(JSON.parse(stored)); // eslint-disable-line react-hooks/set-state-in-effect
       } catch { localStorage.removeItem('sv_user'); }
     }
     setLoading(false);

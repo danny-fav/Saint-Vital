@@ -11,4 +11,9 @@ urlpatterns = [
     path('addresses/', views.AddressListCreateView.as_view(), name='address-list'),
     path('addresses/<int:pk>/', views.AddressDetailView.as_view(), name='address-detail'),
     path('preferences/', views.UserPreferenceView.as_view(), name='preferences'),
+    path('verify-email/', views.VerifyEmailView.as_view(), name='verify-email'),
+    path('resend-verification/', views.ResendVerificationView.as_view(), name='resend-verification'),
+    path('password-reset/', views.PasswordResetRequestView.as_view(), name='password-reset'),
+    path('password-reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
+    path('users/', views.UserListView.as_view(), name='user-list'),
 ]

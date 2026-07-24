@@ -46,7 +46,7 @@ export default function Contact() {
             <button className="btn-gold btn-gold-hover">Send Message</button>
             {sent && (
               <p className="text-sm text-[color:var(--gold)]">
-                Thank you. We'll respond shortly.
+                Thank you. We&apos;ll respond shortly.
               </p>
             )}
           </form>

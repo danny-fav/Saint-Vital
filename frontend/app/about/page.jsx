@@ -1,4 +1,5 @@
 
+import Image from "next/image";
 import { PageShell, PageHero } from "@/components/site/PageShell";
 
 const timeline = [
@@ -18,7 +19,7 @@ export default function About() {
 
       <section className="container-lux pb-24 grid md:grid-cols-2 gap-16 items-center">
         <div className="product-image aspect-[4/5]">
-          <img src="/assets/hero-model.jpg" alt="Saint Vital atelier" loading="lazy" />
+          <Image src="/assets/hero-model.jpg" alt="Saint Vital atelier" fill className="object-cover" />
         </div>
         <div>
           <p className="text-eyebrow">Our Mission</p>

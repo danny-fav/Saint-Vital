@@ -1,3 +1,6 @@
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -8,12 +11,27 @@ import {
 } from "lucide-react";
 import { PageShell } from "@/components/site/PageShell";
 import { ProductCard } from "@/components/site/ProductCard";
-import { products, categoryImages, collections, reviews } from "@/lib/data";
+import {
+  useFeaturedProducts,
+  useNewArrivals,
+  useBestSellers,
+  useCategories,
+} from "@/hooks/useProducts";
 
 export default function Home() {
-  const official = products.filter((p) => p.official);
-  const newArrivals = [...products].filter((p) => p.isNew);
-  const bestSellers = [...products].sort((a, b) => b.reviews - a.reviews);
+  const { data: featuredData, isPending: featuredLoading } =
+    useFeaturedProducts();
+  const { data: newArrivalsData, isPending: newArrivalsLoading } =
+    useNewArrivals();
+  const { data: bestSellersData, isPending: bestSellersLoading } =
+    useBestSellers();
+  const { data: categoriesData, isPending: categoriesLoading } =
+    useCategories();
+
+  const featured = featuredData?.results || featuredData || [];
+  const newArrivals = newArrivalsData?.results || newArrivalsData || [];
+  const bestSellers = bestSellersData?.results || bestSellersData || [];
+  const categories = categoriesData?.results || categoriesData || [];
 
   return (
     <PageShell>
@@ -55,17 +73,23 @@ export default function Home() {
           </div>
           <div className="order-1 md:order-2">
             <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden rounded-2xl bg-background">
-              <img
+              <Image
                 src="/assets/hero-model.jpg"
                 alt="Saint Vital campaign"
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                priority
               />
               <div className="absolute bottom-4 left-4 right-4 bg-card/95 backdrop-blur rounded-xl p-3 flex items-center justify-between shadow-lg">
                 <div>
                   <p className="text-[0.65rem] font-bold tracking-wide uppercase text-[color:var(--gold)]">
                     Featured
                   </p>
-                  <p className="text-sm font-semibold">Vital Monogram Hoodie</p>
+                  <p className="text-sm font-semibold">
+                    {featuredLoading
+                      ? "Loading..."
+                      : featured?.[0]?.name || "Vital Monogram Hoodie"}
+                  </p>
                 </div>
                 <Link href="/shop" className="btn-primary !py-1.5 !px-3 !text-xs">
                   Shop
@@ -94,26 +118,38 @@ export default function Home() {
             View all <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {categoryImages.map((c) => (
-            <Link
-              key={c.name}
-              href={c.href}
-              className="group relative aspect-square overflow-hidden rounded-xl bg-[color:var(--surface)]"
-            >
-              <img
-                src={c.image}
-                alt={c.name}
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        {categoriesLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-square rounded-xl bg-[color:var(--surface)] animate-pulse"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-3">
-                <p className="text-white font-bold text-sm">{c.name}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {categories.map((c) => (
+              <Link
+                key={c.id}
+                href={`/shop?category=${c.slug}`}
+                className="group relative aspect-square overflow-hidden rounded-xl bg-[color:var(--surface)]"
+              >
+                <Image
+                  src={c.image || `/assets/category-${c.slug}.jpg`}
+                  alt={c.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 20vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-3">
+                  <p className="text-white font-bold text-sm">{c.name}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Collections */}
@@ -130,22 +166,23 @@ export default function Home() {
             </div>
           </div>
           <div className="grid md:grid-cols-3 gap-4">
-            {collections.map((col) => (
+            {categories.slice(0, 3).map((col) => (
               <Link
                 key={col.id}
-                href="/shop"
+                href={`/shop?category=${col.slug}`}
                 className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-background"
               >
-                <img
-                  src={col.image}
+                <Image
+                  src={col.image || "/assets/product-hoodie.jpg"}
                   alt={col.name}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-5">
                   <p className="text-white font-bold text-lg">{col.name}</p>
-                  <p className="text-white/70 text-sm mt-1">{col.description}</p>
+                  <p className="text-white/70 text-sm mt-1">{col.description || "Curated essentials."}</p>
                 </div>
               </Link>
             ))}
@@ -171,11 +208,23 @@ export default function Home() {
             See all <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          {newArrivals.slice(0, 4).map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        {newArrivalsLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <div className="aspect-[4/5] rounded-xl bg-[color:var(--surface)] animate-pulse" />
+                <div className="h-4 w-24 bg-[color:var(--surface)] rounded animate-pulse" />
+                <div className="h-5 w-32 bg-[color:var(--surface)] rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {newArrivals.slice(0, 4).map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Best Sellers */}
@@ -197,11 +246,23 @@ export default function Home() {
               Shop all <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {bestSellers.slice(0, 4).map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          {bestSellersLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <div className="aspect-[4/5] rounded-xl bg-[color:var(--surface)] animate-pulse" />
+                  <div className="h-4 w-24 bg-[color:var(--surface)] rounded animate-pulse" />
+                  <div className="h-5 w-32 bg-[color:var(--surface)] rounded animate-pulse" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {bestSellers.slice(0, 4).map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -230,12 +291,12 @@ export default function Home() {
               Learn more <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="aspect-[4/5] rounded-xl overflow-hidden bg-[color:var(--surface)]">
-            <img
+          <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[color:var(--surface)]">
+            <Image
               src="/assets/hero-model.jpg"
               alt="Saint Vital"
-              loading="lazy"
-              className="h-full w-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
         </div>
@@ -251,7 +312,12 @@ export default function Home() {
             4.8 average from 1,200+ reviews.
           </p>
           <div className="mt-8 grid md:grid-cols-4 gap-4">
-            {reviews.map((r) => (
+            {[
+              { quote: "Every detail whispers quality. The Vital Hoodie feels like a piece I'll wear for a decade.", author: "Amara O.", location: "London" },
+              { quote: "Saint Vital redefines what modern fashion should feel like. Effortless, impeccable.", author: "Kenji T.", location: "Tokyo" },
+              { quote: "The quality is unmatched. My go-to for timeless pieces that actually last.", author: "Elena V.", location: "Milan" },
+              { quote: "Finally a brand that cares about fit, fabric, and finish. Worth every penny.", author: "Marcus J.", location: "New York" },
+            ].map((r) => (
               <div key={r.author} className="card-lux p-5">
                 <div className="flex items-center gap-0.5 text-[color:var(--gold)]">
                   {Array.from({ length: 5 }).map((_, i) => (

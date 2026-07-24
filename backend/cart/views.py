@@ -1,7 +1,9 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Cart, CartItem
+from decimal import Decimal
+from django.utils import timezone
+from .models import Cart, CartItem, Coupon
 from .serializers import CartSerializer, CartItemCreateSerializer, CartItemUpdateSerializer
 from products.models import Product, ProductVariant
 
@@ -86,9 +88,27 @@ class ApplyCouponView(APIView):
     def post(self, request):
         code = request.data.get('code', '')
         cart = Cart.objects.get(user=request.user)
+        if not code:
+            cart.coupon_code = ''
+            cart.discount = 0
+            cart.save()
+            return Response(CartSerializer(cart).data)
+        try:
+            coupon = Coupon.objects.get(code=code)
+        except Coupon.DoesNotExist:
+            return Response({'error': 'Invalid coupon code'}, status=status.HTTP_400_BAD_REQUEST)
+        if not coupon.is_valid():
+            return Response({'error': 'Coupon is expired or no longer valid'}, status=status.HTTP_400_BAD_REQUEST)
+        if cart.subtotal < coupon.min_order_amount:
+            return Response({'error': f'Minimum order amount of ${coupon.min_order_amount} not met'}, status=status.HTTP_400_BAD_REQUEST)
+        if coupon.discount_type == 'percentage':
+            discount = (cart.subtotal * coupon.discount_value / Decimal('100'))
+            if coupon.max_discount and discount > coupon.max_discount:
+                discount = coupon.max_discount
+        else:
+            discount = coupon.discount_value
         cart.coupon_code = code
-        # TODO: Validate coupon against a Coupon model
-        cart.discount = 0
+        cart.discount = discount
         cart.save()
         return Response(CartSerializer(cart).data)
 

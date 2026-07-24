@@ -1,8 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { PageShell } from "@/components/site/PageShell";
 import { CheckCircle, Package, ArrowRight } from "lucide-react";
 
-export default function OrderSuccessPage() {
+function OrderSuccessContent() {
+  const searchParams = useSearchParams();
+  const reference = searchParams.get("reference");
+
   return (
     <PageShell>
       <section className="container-lux py-24 text-center">
@@ -18,7 +25,9 @@ export default function OrderSuccessPage() {
           <div className="mt-8 p-6 rounded-xl bg-[color:var(--surface)] text-left">
             <div className="flex items-center gap-3">
               <Package className="h-5 w-5 text-[color:var(--gold)]" />
-              <p className="font-semibold text-sm">Order #SV-2026-4281</p>
+              <p className="font-semibold text-sm">
+                {reference ? `Order #${reference}` : "Order confirmed"}
+              </p>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
               Estimated delivery: 5-10 business days
@@ -26,7 +35,7 @@ export default function OrderSuccessPage() {
           </div>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/account" className="btn-primary">
-              View Order <ArrowRight className="h-4 w-4" />
+              View Orders <ArrowRight className="h-4 w-4" />
             </Link>
             <Link href="/shop" className="btn-ghost-outline">
               Continue Shopping
@@ -35,5 +44,13 @@ export default function OrderSuccessPage() {
         </div>
       </section>
     </PageShell>
+  );
+}
+
+export default function OrderSuccess() {
+  return (
+    <Suspense fallback={null}>
+      <OrderSuccessContent />
+    </Suspense>
   );
 }

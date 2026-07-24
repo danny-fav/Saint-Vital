@@ -101,6 +101,21 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  *, ::after, ::before {
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  input, textarea, select {
+    color: var(--color-foreground);
+    caret-color: var(--color-foreground);
+  }
+
+  select option {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
   }
 }
 
@@ -263,6 +278,7 @@
 }
 
 .product-image {
+  position: relative;
   overflow: hidden;
   border-radius: var(--radius-lg);
 }

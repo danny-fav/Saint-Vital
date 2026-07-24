@@ -1,13 +1,50 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PageShell, PageHero } from "@/components/site/PageShell";
+import { useAuth } from "@/hooks/useAuth";
 
+function AuthForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/account";
+  const { login, register } = useAuth();
+  const [mode, setMode] = useState(searchParams.get("mode") === "signup" ? "signup" : "signin");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({ email: "", password: "", first_name: "", last_name: "", password_confirm: "" });
 
+  const handleChange = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  };
 
-export default function Auth() {
-  const [mode, setMode] = useState("signin");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      if (mode === "signin") {
+        await login(form.email, form.password);
+      } else {
+        await register({
+          email: form.email,
+          password: form.password,
+          password_confirm: form.password_confirm,
+          first_name: form.first_name,
+          last_name: form.last_name,
+        });
+      }
+      router.push(redirectTo);
+    } catch (err) {
+      const msg = err?.response?.data?.detail || err?.response?.data?.email?.[0] || "Something went wrong. Please try again.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <PageShell>
       <PageHero
@@ -27,17 +64,33 @@ export default function Auth() {
               </button>
             ))}
           </div>
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {mode === "signup" && (
-              <div>
-                <label className="text-eyebrow block mb-2">Name</label>
-                <input className="w-full bg-transparent border-b border-border py-3 text-sm outline-none focus:border-[color:var(--gold)]" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-eyebrow block mb-2">First Name</label>
+                  <input
+                    value={form.first_name}
+                    onChange={handleChange("first_name")}
+                    className="w-full bg-transparent border-b border-border py-3 text-sm outline-none focus:border-[color:var(--gold)]"
+                  />
+                </div>
+                <div>
+                  <label className="text-eyebrow block mb-2">Last Name</label>
+                  <input
+                    value={form.last_name}
+                    onChange={handleChange("last_name")}
+                    className="w-full bg-transparent border-b border-border py-3 text-sm outline-none focus:border-[color:var(--gold)]"
+                  />
+                </div>
               </div>
             )}
             <div>
               <label className="text-eyebrow block mb-2">Email</label>
               <input
                 type="email"
+                value={form.email}
+                onChange={handleChange("email")}
                 className="w-full bg-transparent border-b border-border py-3 text-sm outline-none focus:border-[color:var(--gold)]"
               />
             </div>
@@ -45,12 +98,32 @@ export default function Auth() {
               <label className="text-eyebrow block mb-2">Password</label>
               <input
                 type="password"
+                value={form.password}
+                onChange={handleChange("password")}
                 className="w-full bg-transparent border-b border-border py-3 text-sm outline-none focus:border-[color:var(--gold)]"
               />
             </div>
-            <Link href="/account" className="btn-gold btn-gold-hover w-full">
-              {mode === "signin" ? "Sign In" : "Create Account"}
-            </Link>
+            {mode === "signup" && (
+              <div>
+                <label className="text-eyebrow block mb-2">Confirm Password</label>
+                <input
+                  type="password"
+                  value={form.password_confirm}
+                  onChange={handleChange("password_confirm")}
+                  className="w-full bg-transparent border-b border-border py-3 text-sm outline-none focus:border-[color:var(--gold)]"
+                />
+              </div>
+            )}
+            {error && (
+              <p className="text-red-500 text-xs text-center">{error}</p>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-gold btn-gold-hover w-full disabled:opacity-60"
+            >
+              {loading ? "Loading..." : mode === "signin" ? "Sign In" : "Create Account"}
+            </button>
             <p className="text-center text-xs text-muted-foreground">
               Or continue with
             </p>
@@ -73,5 +146,12 @@ export default function Auth() {
       </section>
     </PageShell>
   );
+}
 
+export default function Auth() {
+  return (
+    <Suspense fallback={<div className="container-lux py-16 text-center text-muted-foreground">Loading...</div>}>
+      <AuthForm />
+    </Suspense>
+  );
 }

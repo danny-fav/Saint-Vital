@@ -5,8 +5,8 @@ from .models import User, Address, UserPreference
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'phone', 'avatar', 'role', 'email_verified', 'date_joined']
-        read_only_fields = ['id', 'role', 'email_verified', 'date_joined']
+        fields = ['id', 'email', 'first_name', 'last_name', 'phone', 'avatar', 'role', 'is_staff', 'email_verified', 'date_joined']
+        read_only_fields = ['id', 'role', 'is_staff', 'email_verified', 'date_joined']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -56,3 +56,22 @@ class UserPreferenceSerializer(serializers.ModelSerializer):
         model = UserPreference
         fields = '__all__'
         read_only_fields = ['id', 'user']
+
+
+class EmailVerificationSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+    password_confirm = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['password'] != data['password_confirm']:
+            raise serializers.ValidationError({'password_confirm': 'Passwords do not match'})
+        return data

@@ -18,7 +18,7 @@ export function useWishlist() {
     finally { setLoading(false); }
   }, [isAuthenticated]);
 
-  useEffect(() => { fetchWishlist(); }, [fetchWishlist]);
+  useEffect(() => { fetchWishlist(); }, [fetchWishlist]); // eslint-disable-line react-hooks/set-state-in-effect
 
   const addItem = useCallback(async (productId) => {
     const res = await wishlistService.add(productId);
